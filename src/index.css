@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --aurora-purple: #9d4edd;
+  --aurora-green: #2ec4b6;
+  --deep-space: #0f0f1a;
+  --space-gray: #1a1a2e;
+  --aurora-glow: #c77dff;
+  --mint-glow: #64ffda;
+}
+
+body {
+  background: var(--deep-space);
+  min-height: 100vh;
+  color: #fff;
+}
+
+.aurora-glow {
+  background: linear-gradient(135deg, var(--aurora-purple), var(--aurora-green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.aurora-card {
+  background: rgba(26, 26, 46, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(157, 78, 221, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurora-card:hover {
+  border-color: rgba(157, 78, 221, 0.5);
+  box-shadow: 0 0 30px rgba(157, 78, 221, 0.2);
+  transform: translateY(-2px);
+}
+
+.aurora-button {
+  background: linear-gradient(135deg, var(--aurora-purple), var(--aurora-green));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurora-button:hover {
+  opacity: 0.9;
+  /* transform: translateY(-1px); */
+  box-shadow: 0 0 20px rgba(157, 78, 221, 0.3);
+}
+
+.aurora-input {
+  background: rgba(15, 15, 26, 0.8);
+  border: 1px solid rgba(157, 78, 221, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.aurora-input:focus {
+  border-color: var(--aurora-purple);
+  box-shadow: 0 0 15px rgba(157, 78, 221, 0.2);
+}
+
+.aurora-range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  background: rgba(157, 78, 221, 0.2);
+  border-radius: 2px;
+  outline: none;
+}
+
+.aurora-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, var(--aurora-purple), var(--aurora-green));
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.aurora-range-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(157, 78, 221, 0.3);
+}
+
+.aurora-checkbox {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(157, 78, 221, 0.4);
+  border-radius: 4px;
+  background: rgba(15, 15, 26, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.aurora-checkbox:checked {
+  background: linear-gradient(135deg, var(--aurora-purple), var(--aurora-green));
+  border-color: transparent;
+}
+
+.filter-section {
+  border-bottom: 1px solid rgba(157, 78, 221, 0.2);
+  padding: 1.5rem 0;
+}
+
+.filter-section:last-child {
+  border-bottom: none;
+}
