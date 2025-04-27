@@ -47,41 +47,62 @@ export const list = query({
     maxSqFt: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let query = ctx.db.query("properties");
+    // Start with a basic query
+    let propertiesQuery = ctx.db.query("properties");
     
-    if (args.minPrice !== undefined || args.maxPrice !== undefined) {
-      query = query.withIndex("by_price", q => {
-        if (args.minPrice !== undefined) q = q.gte("price", args.minPrice);
-        if (args.maxPrice !== undefined) q = q.lte("price", args.maxPrice);
-        return q;
-      });
+    // Apply price filters if provided
+    if (args.minPrice !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.gte(q.field("price"), args.minPrice!)
+      );
     }
     
-    if (args.minBeds !== undefined || args.maxBeds !== undefined) {
-      query = query.withIndex("by_bedrooms", q => {
-        if (args.minBeds !== undefined) q = q.gte("bedrooms", args.minBeds);
-        if (args.maxBeds !== undefined) q = q.lte("bedrooms", args.maxBeds);
-        return q;
-      });
+    if (args.maxPrice !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.lte(q.field("price"), args.maxPrice!)
+      );
     }
     
-    if (args.minBaths !== undefined || args.maxBaths !== undefined) {
-      query = query.withIndex("by_bathrooms", q => {
-        if (args.minBaths !== undefined) q = q.gte("bathrooms", args.minBaths);
-        if (args.maxBaths !== undefined) q = q.lte("bathrooms", args.maxBaths);
-        return q;
-      });
+    // Apply bedroom filters if provided
+    if (args.minBeds !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.gte(q.field("bedrooms"), args.minBeds!)
+      );
     }
     
-    if (args.minSqFt !== undefined || args.maxSqFt !== undefined) {
-      query = query.withIndex("by_square_feet", q => {
-        if (args.minSqFt !== undefined) q = q.gte("squareFeet", args.minSqFt);
-        if (args.maxSqFt !== undefined) q = q.lte("squareFeet", args.maxSqFt);
-        return q;
-      });
+    if (args.maxBeds !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.lte(q.field("bedrooms"), args.maxBeds!)
+      );
     }
     
-    return await query.collect();
+    // Apply bathroom filters if provided
+    if (args.minBaths !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.gte(q.field("bathrooms"), args.minBaths!)
+      );
+    }
+    
+    if (args.maxBaths !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.lte(q.field("bathrooms"), args.maxBaths!)
+      );
+    }
+    
+    // Apply square feet filters if provided
+    if (args.minSqFt !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.gte(q.field("squareFeet"), args.minSqFt!)
+      );
+    }
+    
+    if (args.maxSqFt !== undefined) {
+      propertiesQuery = propertiesQuery.filter(q => 
+        q.lte(q.field("squareFeet"), args.maxSqFt!)
+      );
+    }
+    
+    return await propertiesQuery.collect();
   },
 });
 
@@ -110,6 +131,26 @@ export const getFeatured = query({
 export const addSampleData = mutation({
   args: {},
   handler: async (ctx) => {
+    // First, get a sample user ID to use for properties
+    const sampleUser = await ctx.db
+      .query("users")
+      .filter(q => q.eq(q.field("email"), "john.doe@example.com"))
+      .first();
+    
+    // If no sample user exists, we need to create one
+    let userId;
+    if (sampleUser) {
+      userId = sampleUser._id;
+    } else {
+      // Create a sample user if none exists
+      userId = await ctx.db.insert("users", {
+        name: "John Doe",
+        email: "john.doe@example.com",
+        image: "https://randomuser.me/api/portraits/men/1.jpg",
+        isAnonymous: false
+      });
+    }
+
     const sampleProperties = [
       {
         title: "Luxury Waterfront Estate",
@@ -121,7 +162,7 @@ export const addSampleData = mutation({
         description: "Stunning waterfront estate with panoramic lake and mountain views. Features include a private dock, wine cellar, home theater, and guest house.",
         imageUrl: "https://images.unsplash.com/photo-1613977257363-707ba9348227",
         features: ["Waterfront", "Private Dock", "Wine Cellar", "Home Theater", "Guest House", "Smart Home System"],
-        userId: await getAuthUserId(ctx),
+        userId: userId, // Using our sample user ID
       },
       // ... Add 19 more sample properties with similar structure but different details
     ];
