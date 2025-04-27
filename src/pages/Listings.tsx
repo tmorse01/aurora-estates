@@ -20,7 +20,18 @@ export function Listings() {
   });
 
   const searchResults = useQuery(api.properties.search, { searchTerm }) || [];
-  const filteredProperties = useQuery(api.properties.list, filters) || [];
+  
+  // Map frontend filter names to match the backend schema names
+  const mappedFilters = {
+    minPrice: filters.minPrice,
+    maxPrice: filters.maxPrice,
+    minBeds: filters.minBedrooms,
+    minBaths: filters.minBathrooms,
+    minSqFt: filters.minSquareFeet,
+    maxSqFt: filters.maxSquareFeet,
+  };
+  
+  const filteredProperties = useQuery(api.properties.list, mappedFilters) || [];
 
   const displayProperties = searchTerm ? searchResults : filteredProperties;
 
